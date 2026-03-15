@@ -3,120 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenIntent | 投资人匹配 AI 演示</title>
+    <title>OpenIntent | 意图路由中枢</title>
     <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
     <style>
-        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f8fafc; }
-        .gradient-text { background: linear-gradient(90deg, #2563eb, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap)');
+        
+        :root { --accent: #3b82f6; --accent-glow: rgba(59, 130, 246, 0.5); }
+        body { 
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif; 
+            background-color: #050810; 
+            color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+        }
+        .logo-box {
+            position: relative; width: 48px; height: 48px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .reasoning-panel {
+            background: rgba(0, 0, 0, 0.2); border-left: 1px solid rgba(59, 130, 246, 0.3);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal { animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center py-16 px-4">
+<body class="min-h-screen flex flex-col justify-center items-center py-12">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10 text-white/5 uppercase font-black text-[20vw] select-none flex items-center justify-center opacity-10">Intent</div>
 
-    <!-- 头部导航模拟 -->
-    <div class="max-w-3xl w-full flex justify-between items-center mb-12">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">OI</div>
-            <span class="text-xl font-bold tracking-tight text-slate-800">OpenIntent <span class="text-blue-600">Invest</span></span>
-        </div>
-        <div class="text-sm text-slate-500 font-medium">开源、透明、高效</div>
-    </div>
-
-    <!-- 主交互区 -->
-    <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl shadow-blue-100/50 border border-slate-100 p-8 md:p-12">
-        <div class="text-center mb-10">
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-4">精准匹配你的<span class="gradient-text">下一位投资人</span></h2>
-            <p class="text-slate-500 leading-relaxed">基于 OpenIntent 路由协议，自动连接最懂你赛道的垂直领域投资 Agent</p>
-        </div>
-
-        <!-- 模拟输入框 -->
-        <div class="relative mb-8">
-            <textarea id="userInput" rows="3" 
-                   class="w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-lg rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 block p-5 transition-all outline-none resize-none" 
-                   placeholder="描述你的融资需求，例如：我们在做 AIGC 驱动的 3D 设计工具，目前处于 Pre-A 轮...">我们在做 AIGC 驱动的 3D 设计工具，目前处于 Pre-A 轮，核心团队来自一线大厂...</textarea>
-            
-            <button onclick="simulateRouting()" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all flex items-center justify-center gap-2">
-                <span>开始智能匹配</span>
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- 加载动画 -->
-        <div id="resultArea" class="hidden py-8">
-            <div class="flex flex-col items-center">
-                <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-                <div class="text-blue-600 font-bold animate-pulse text-lg">正在调用投资人画像 Agent 进行语义匹配...</div>
-                <div class="text-slate-400 text-sm mt-2">已检索 12,403 名活跃合伙人数据</div>
+    <div class="w-full max-w-4xl px-6">
+        <!-- Header -->
+        <nav class="flex flex-col items-center text-center gap-4 mb-12">
+            <div class="logo-box"><span class="font-black text-xl text-white">OI</span></div>
+            <div>
+                <h1 class="text-3xl font-extrabold tracking-tight">OpenIntent</h1>
+                <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">Cross-Agent Router Protocol</p>
             </div>
-        </div>
+        </nav>
 
-        <!-- 匹配结果卡片 -->
-        <div id="agentCard" class="hidden opacity-0 transition-all duration-700 translate-y-4">
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-2xl p-6 relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4">
-                    <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider">匹配度 98%</span>
-                </div>
-                
-                <div class="flex items-center gap-4 mb-6">
-                    <div class="text-4xl">📊</div>
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-900">VC 投研匹配专家 Agent</h3>
-                        <p class="text-sm text-slate-500">由“创投数据实验室”开发</p>
+        <!-- Input Area -->
+        <section class="mb-12">
+            <div class="glass-card rounded-[2.5rem] p-3 transition-all">
+                <textarea id="intentInput" rows="3" 
+                    class="w-full bg-transparent text-white text-xl font-medium rounded-[2rem] block p-8 outline-none resize-none placeholder-slate-600" 
+                    placeholder="描述您的意图或商业需求..."></textarea>
+                <div class="p-4 pt-0 flex flex-col md:flex-row gap-4 items-center">
+                    <div class="flex flex-wrap gap-2 flex-1">
+                        <button onclick="quickFill('寻找 AIGC 3D 赛道的投资人')" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-bold text-slate-400 border border-white/5"># 资本匹配</button>
+                        <button onclick="quickFill('查询澳洲清关最新的合规政策')" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-bold text-slate-400 border border-white/5"># 跨境贸易</button>
                     </div>
-                </div>
-
-                <div class="space-y-4">
-                    <div class="bg-white/80 backdrop-blur rounded-xl p-4 border border-blue-100 shadow-sm">
-                        <div class="text-xs font-bold text-blue-600 mb-1 uppercase">匹配理由 (Reasoning)</div>
-                        <p class="text-slate-700 text-sm">项目属于“生成式 AI”垂直赛道，与该 Agent 库内 35 名活跃合伙人的近期领投方向高度契合。识别到该细分领域近期有 3 笔大额融资事件。</p>
-                    </div>
-
-                    <div class="bg-white/80 backdrop-blur rounded-xl p-4 border border-emerald-100 shadow-sm">
-                        <div class="text-xs font-bold text-emerald-600 mb-1 uppercase">免费洞察 (Free Insight)</div>
-                        <p class="text-slate-700 text-sm">当前 3D AIGC 赛道的 Pre-A 轮估值中位数约为 2500 万美金，建议在 BP 中强调“模型推理成本优化”以提升溢价。</p>
-                    </div>
-                </div>
-
-                <div class="mt-8 flex flex-col sm:flex-row gap-3">
-                    <button class="flex-1 bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition-all">
-                        获取精准投资人名单
-                    </button>
-                    <button class="px-6 bg-amber-100 text-amber-700 font-bold py-4 rounded-xl hover:bg-amber-200 transition-all flex items-center justify-center gap-2">
-                        <span>☕</span>
-                        <span>赞赏 Agent</span>
+                    <button onclick="dispatchIntent()" class="w-full md:w-auto bg-white text-black px-10 py-4 rounded-2xl font-extrabold hover:scale-[1.02] active:scale-95 transition-all">
+                        并发分发
                     </button>
                 </div>
             </div>
-            
-            <button onclick="location.reload()" class="mt-6 w-full text-slate-400 text-sm font-medium hover:text-slate-600 transition-all underline decoration-dotted underline-offset-4">
-                重新匹配其他 Agent
-            </button>
-        </div>
-    </div>
+        </section>
 
-    <!-- 底部页脚 -->
-    <div class="mt-12 text-slate-400 text-sm">
-        Powered by <span class="font-bold">OpenIntent Protocol</span> - 每一个垂直 Agent 都值得被发现
+        <!-- Results Area -->
+        <div id="loading" class="hidden flex flex-col items-center py-10">
+            <div class="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 text-slate-500 font-bold text-xs tracking-widest uppercase">Routing through protocol...</p>
+        </div>
+        <div id="resultsGrid" class="space-y-8"></div>
     </div>
 
     <script>
-        function simulateRouting() {
-            const btn = document.querySelector('button');
-            const resultArea = document.getElementById('resultArea');
-            const agentCard = document.getElementById('agentCard');
-            
-            btn.style.display = 'none';
-            resultArea.classList.remove('hidden');
-            
+        const agentData = {
+            invest: [{
+                name: "VC Matrix", dev: "QUANTUM DATA", icon: "💎",
+                answer: "锁定 3 位近期有实际投资动作的合伙人。当前赛道估值中位数约为 2500 万美金。",
+                why: "基于 AIGC 语义特征检索了 Q1 获投记录。匹配度基于合伙人近期活跃权重。"
+            }],
+            trade: [{
+                name: "Logi-Expert", dev: "GLOBAL ROUTE", icon: "🚢",
+                answer: "本周清关参考价 12.5 AUD/kg。直飞模式可确保存活率 >95%。",
+                why: "系统已连接实时货运 API，识别出当前季节性气候风险，建议采用直达链路。"
+            }]
+        };
+
+        function quickFill(t) { document.getElementById('intentInput').value = t; }
+        
+        function dispatchIntent() {
+            const input = document.getElementById('intentInput').value;
+            if (!input) return;
+            const loading = document.getElementById('loading');
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+            loading.classList.remove('hidden');
+
             setTimeout(() => {
-                resultArea.classList.add('hidden');
-                agentCard.classList.remove('hidden');
-                setTimeout(() => {
-                    agentCard.classList.remove('opacity-0', 'translate-y-4');
-                    agentCard.classList.add('opacity-100', 'translate-y-0');
-                }, 50);
-            }, 2000);
+                loading.classList.add('hidden');
+                let results = (input.includes('投资') || input.includes('BP')) ? agentData.invest : 
+                          (input.includes('清关') || input.includes('贸易')) ? agentData.trade : [];
+                
+                if (results.length === 0) {
+                    grid.innerHTML = '<p class="text-center text-slate-500">未发现匹配的垂直 Agent，请尝试其他关键词。</p>';
+                    return;
+                }
+
+                results.forEach((agent, i) => {
+                    const card = document.createElement('div');
+                    card.className = "glass-card rounded-[2.5rem] p-10 reveal";
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between mb-8">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl border border-white/10">${agent.icon}</div>
+                                <div class="text-left">
+                                    <h3 class="text-xl font-bold">${agent.name}</h3>
+                                    <p class="text-blue-500 text-[9px] font-black tracking-widest">${agent.dev}</p>
+                                </div>
+                            </div>
+                            <span class="text-blue-400 font-mono text-xs font-bold bg-blue-500/10 px-3 py-1 rounded-lg">MATCH: 98%</span>
+                        </div>
+                        <div class="mb-8 text-left">
+                            <h4 class="text-slate-500 text-[10px] font-black uppercase mb-3">Direct Insight</h4>
+                            <p class="text-white text-lg font-semibold">${agent.answer}</p>
+                        </div>
+                        <div class="reasoning-panel p-5 rounded-xl text-left">
+                            <h4 class="text-slate-500 text-[8px] font-black uppercase mb-2">Routing Logic</h4>
+                            <p class="text-slate-400 text-xs">${agent.why}</p>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }, 800);
         }
     </script>
 </body>
