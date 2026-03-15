@@ -1,4 +1,4 @@
-# OpenIntent开源意图路 (由协议)
+# OpenIntent
 Open Source Intent Routing Protocol: Connecting Users with Vertical Agents.
 ## 🌟 核心理念
 
