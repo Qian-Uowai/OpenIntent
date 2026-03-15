@@ -3,138 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenIntent | 意图路由中枢</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <title>OpenIntent | 意图路由全场景预览</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap](https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap');
         
-        :root { --accent: #3b82f6; --accent-glow: rgba(59, 130, 246, 0.5); }
         body { 
             font-family: 'Plus Jakarta Sans', system-ui, sans-serif; 
             background-color: #050810; 
             color: #ffffff;
-            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
         .logo-box {
-            position: relative; width: 48px; height: 48px;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 12px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 20px var(--accent-glow);
+            border-radius: 12px; width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.5);
         }
         .glass-card {
-            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
         }
+        .glass-card:hover { border-color: #3b82f6; }
         .reasoning-panel {
-            background: rgba(0, 0, 0, 0.2); border-left: 1px solid rgba(59, 130, 246, 0.3);
+            background: rgba(0, 0, 0, 0.3); border-left: 3px solid #3b82f6;
             font-family: 'JetBrains Mono', monospace;
         }
-        @keyframes slideIn {
+        @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .reveal { animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .reveal { animation: fadeInUp 0.5s ease forwards; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-center items-center py-12">
-    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10 text-white/5 uppercase font-black text-[20vw] select-none flex items-center justify-center opacity-10">Intent</div>
-
-    <div class="w-full max-w-4xl px-6">
-        <!-- Header -->
-        <nav class="flex flex-col items-center text-center gap-4 mb-12">
-            <div class="logo-box"><span class="font-black text-xl text-white">OI</span></div>
-            <div>
-                <h1 class="text-3xl font-extrabold tracking-tight">OpenIntent</h1>
-                <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.2em]">Cross-Agent Router Protocol</p>
+<body class="min-h-screen py-12 px-6 flex flex-col items-center">
+    <div class="w-full max-w-4xl">
+        <!-- 头部导航 -->
+        <header class="text-center mb-16">
+            <div class="flex justify-center mb-6">
+                <div class="logo-box animate-pulse text-white font-black text-xl">OI</div>
             </div>
-        </nav>
+            <h1 class="text-4xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">OpenIntent</h1>
+            <p class="text-slate-500 text-xs font-bold uppercase tracking-[0.3em]">连接垂直领域智能体的开源协议</p>
+        </header>
 
-        <!-- Input Area -->
-        <section class="mb-12">
-            <div class="glass-card rounded-[2.5rem] p-3 transition-all">
+        <!-- 输入区域 -->
+        <main class="mb-16">
+            <div class="glass-card rounded-[2.5rem] p-4 shadow-2xl">
                 <textarea id="intentInput" rows="3" 
-                    class="w-full bg-transparent text-white text-xl font-medium rounded-[2rem] block p-8 outline-none resize-none placeholder-slate-600" 
-                    placeholder="描述您的意图或商业需求..."></textarea>
-                <div class="p-4 pt-0 flex flex-col md:flex-row gap-4 items-center">
-                    <div class="flex flex-wrap gap-2 flex-1">
-                        <button onclick="quickFill('寻找 AIGC 3D 赛道的投资人')" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-bold text-slate-400 border border-white/5"># 资本匹配</button>
-                        <button onclick="quickFill('查询澳洲清关最新的合规政策')" class="px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full text-[10px] font-bold text-slate-400 border border-white/5"># 跨境贸易</button>
+                    class="w-full bg-transparent text-white text-xl p-6 outline-none resize-none placeholder-slate-700" 
+                    placeholder="请输入您的商业需求，例如：我想开发一款社交App，用哪个模型最省钱？"></textarea>
+                <div class="px-6 pb-6 flex flex-col gap-6">
+                    <div class="flex flex-wrap gap-2">
+                        <!-- 这里的案例覆盖了多维度商业场景 -->
+                        <button onclick="quickFill('我的 App 要出海印尼，需要哪些合规准入？')" class="px-4 py-2 bg-blue-500/10 hover:bg-blue-500/20 rounded-full text-[10px] font-bold text-blue-400 border border-blue-500/20 transition-all"># 出海合规</button>
+                        <button onclick="quickFill('寻找能够承接 5000 套精密铝合金加工的工厂')" class="px-4 py-2 bg-purple-500/10 hover:bg-purple-500/20 rounded-full text-[10px] font-bold text-purple-400 border border-purple-500/20 transition-all"># 工业供应链</button>
+                        <button onclick="quickFill('我想做个数字人直播，推荐性价比最高的高保真模型')" class="px-4 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-full text-[10px] font-bold text-emerald-400 border border-emerald-500/20 transition-all"># 模型选型</button>
+                        <button onclick="quickFill('查询《三体》IP 在衍生品周边的授权成本')" class="px-4 py-2 bg-amber-500/10 hover:bg-amber-500/20 rounded-full text-[10px] font-bold text-amber-400 border border-amber-500/20 transition-all"># IP 授权</button>
                     </div>
-                    <button onclick="dispatchIntent()" class="w-full md:w-auto bg-white text-black px-10 py-4 rounded-2xl font-extrabold hover:scale-[1.02] active:scale-95 transition-all">
-                        并发分发
-                    </button>
+                    <div class="flex items-center justify-between border-t border-white/5 pt-4">
+                        <span class="text-[10px] text-slate-600 font-bold uppercase tracking-widest">Powered by Intent-Router v1.2</span>
+                        <button onclick="simulateRoute()" class="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-2xl font-black transition-all active:scale-95 shadow-lg shadow-blue-600/20">
+                            分发意图
+                        </button>
+                    </div>
                 </div>
             </div>
-        </section>
+        </main>
 
-        <!-- Results Area -->
-        <div id="loading" class="hidden flex flex-col items-center py-10">
-            <div class="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <p class="mt-4 text-slate-500 font-bold text-xs tracking-widest uppercase">Routing through protocol...</p>
+        <!-- 结果展示 -->
+        <div id="loader" class="hidden flex flex-col items-center mb-16">
+            <div class="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="mt-4 text-slate-500 font-bold text-[10px] uppercase tracking-widest">跨节点路由中 (Connecting Global Agents)...</p>
         </div>
-        <div id="resultsGrid" class="space-y-8"></div>
+        <div id="results" class="space-y-8 mb-20"></div>
+
+        <!-- 开发者接入模块 -->
+        <footer class="border-t border-white/10 pt-16 pb-8 text-center">
+            <div class="max-w-2xl mx-auto">
+                <div class="inline-block px-4 py-1 bg-blue-600/10 border border-blue-600/20 rounded-full text-blue-500 text-[10px] font-black uppercase tracking-widest mb-6">Developer Portal</div>
+                <h3 class="text-2xl font-bold mb-4">拥有专业 Agent？加入路由网络</h3>
+                <p class="text-slate-500 text-sm leading-relaxed mb-10 px-4">
+                    OpenIntent 不截流用户，只连接价值。通过开源协议，让您的垂直 Agent 触达最精准的商业意图。
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center px-4">
+                    <a href="https://github.com/qian-uowai/OpenIntent" target="_blank" class="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-sm font-bold transition-all">
+                        阅读接入指南
+                    </a>
+                    <a href="https://github.com/qian-uowai/OpenIntent/tree/main/agents" target="_blank" class="px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl text-sm font-bold flex items-center justify-center gap-2 transition-all">
+                        <span>提交 JSON 配置 (PR)</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                    </a>
+                </div>
+            </div>
+        </footer>
     </div>
 
     <script>
-        const agentData = {
-            invest: [{
-                name: "VC Matrix", dev: "QUANTUM DATA", icon: "💎",
-                answer: "锁定 3 位近期有实际投资动作的合伙人。当前赛道估值中位数约为 2500 万美金。",
-                why: "基于 AIGC 语义特征检索了 Q1 获投记录。匹配度基于合伙人近期活跃权重。"
-            }],
-            trade: [{
-                name: "Logi-Expert", dev: "GLOBAL ROUTE", icon: "🚢",
-                answer: "本周清关参考价 12.5 AUD/kg。直飞模式可确保存活率 >95%。",
-                why: "系统已连接实时货运 API，识别出当前季节性气候风险，建议采用直达链路。"
-            }]
+        const mockAgents = {
+            "出海": {
+                name: "Sea-Bridge Legal", icon: "⚖️", dev: "GLOBAL COMPLIANCE GROUP",
+                insight: "印尼 PSE 注册是首要门槛。目前社交类 App 审核约 15 个工作日，建议提前准备数据中心本地化方案。",
+                logic: "已匹配 2024 年印尼通讯部最新修订案，针对泛娱乐出海企业已完成 420+ 成功案例对标。"
+            },
+            "工业": {
+                name: "Machinery Hub", icon: "⚙️", dev: "SMART MANUFACTURE",
+                insight: "华南地区有 12 家工厂具备 5 轴联动加工能力且本周有产能空余。预计单价在 85-110 元/件。",
+                logic: "实时扫描全国 ERP 共享池。识别到佛山 3 家工厂刚刚完成大订单交付，正处于价格最优竞标期。"
+            },
+            "模型": {
+                name: "Model-Select Pro", icon: "🧠", dev: "LLM BENCHMARK AI",
+                insight: "高保真数字人优先选择 MiniMax-abab6 或 DeepSeek-V3。按 API 成本计费，可比同类方案节省 65%。",
+                logic: "基于上周最新的 Token 吞吐量及推理成本实测数据。已为您剔除溢价较高的过时模型。"
+            },
+            "IP": {
+                name: "Copyright Guard", icon: "📜", dev: "IP RIGHTS LAB",
+                insight: "《三体》周边授权目前由版权方统一管理，针对初创文创企业的授权金约在 15w-50w 浮动，需审核设计稿。",
+                logic: "抓取了最近一次版权授权公开拍卖数据，并结合中影及三体宇宙官方招商手册进行语义比对。"
+            }
         };
 
-        function quickFill(t) { document.getElementById('intentInput').value = t; }
-        
-        function dispatchIntent() {
+        function quickFill(text) {
+            document.getElementById('intentInput').value = text;
+            simulateRoute();
+        }
+
+        function simulateRoute() {
             const input = document.getElementById('intentInput').value;
             if (!input) return;
-            const loading = document.getElementById('loading');
-            const grid = document.getElementById('resultsGrid');
-            grid.innerHTML = '';
-            loading.classList.remove('hidden');
+
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            
+            results.innerHTML = '';
+            loader.classList.remove('hidden');
 
             setTimeout(() => {
-                loading.classList.add('hidden');
-                let results = (input.includes('投资') || input.includes('BP')) ? agentData.invest : 
-                          (input.includes('清关') || input.includes('贸易')) ? agentData.trade : [];
+                loader.classList.add('hidden');
                 
-                if (results.length === 0) {
-                    grid.innerHTML = '<p class="text-center text-slate-500">未发现匹配的垂直 Agent，请尝试其他关键词。</p>';
-                    return;
-                }
+                // 关键词逻辑路由
+                let key = "模型"; 
+                if (input.includes("出海") || input.includes("印尼")) key = "出海";
+                else if (input.includes("工厂") || input.includes("加工")) key = "工业";
+                else if (input.includes("IP") || input.includes("三体")) key = "IP";
 
-                results.forEach((agent, i) => {
-                    const card = document.createElement('div');
-                    card.className = "glass-card rounded-[2.5rem] p-10 reveal";
-                    card.innerHTML = `
-                        <div class="flex items-center justify-between mb-8">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center text-2xl border border-white/10">${agent.icon}</div>
-                                <div class="text-left">
-                                    <h3 class="text-xl font-bold">${agent.name}</h3>
-                                    <p class="text-blue-500 text-[9px] font-black tracking-widest">${agent.dev}</p>
-                                </div>
+                const data = mockAgents[key];
+
+                results.innerHTML = `
+                    <div class="glass-card rounded-[2.5rem] p-10 reveal border-l-4 border-l-blue-600 shadow-xl">
+                        <div class="flex items-center gap-4 mb-8">
+                            <div class="w-14 h-14 bg-blue-600/10 rounded-2xl flex items-center justify-center text-3xl border border-blue-600/20">${data.icon}</div>
+                            <div class="text-left">
+                                <h3 class="text-2xl font-bold">${data.name}</h3>
+                                <p class="text-blue-500 text-[10px] font-black tracking-widest uppercase">${data.dev} • Verified</p>
                             </div>
-                            <span class="text-blue-400 font-mono text-xs font-bold bg-blue-500/10 px-3 py-1 rounded-lg">MATCH: 98%</span>
                         </div>
                         <div class="mb-8 text-left">
-                            <h4 class="text-slate-500 text-[10px] font-black uppercase mb-3">Direct Insight</h4>
-                            <p class="text-white text-lg font-semibold">${agent.answer}</p>
+                            <h4 class="text-slate-500 text-[10px] font-black uppercase mb-3 tracking-widest">核心洞察 (Free Insight)</h4>
+                            <p class="text-white text-xl font-semibold leading-relaxed">${data.insight}</p>
                         </div>
-                        <div class="reasoning-panel p-5 rounded-xl text-left">
-                            <h4 class="text-slate-500 text-[8px] font-black uppercase mb-2">Routing Logic</h4>
-                            <p class="text-slate-400 text-xs">${agent.why}</p>
+                        <div class="reasoning-panel p-6 rounded-2xl text-left mb-8">
+                            <h4 class="text-blue-500 text-[9px] font-black uppercase mb-2">路由推理逻辑</h4>
+                            <p class="text-slate-400 text-sm italic">${data.logic}</p>
                         </div>
-                    `;
-                    grid.appendChild(card);
-                });
+                        <div class="flex gap-4">
+                            <button class="bg-white text-black px-8 py-3 rounded-xl font-bold text-sm hover:bg-blue-500 hover:text-white transition-all">获取详细报告</button>
+                            <button class="bg-white/5 hover:bg-white/10 border border-white/10 px-8 py-3 rounded-xl font-bold text-sm transition-all">👍 赞赏支持</button>
+                        </div>
+                    </div>
+                `;
             }, 800);
         }
     </script>
