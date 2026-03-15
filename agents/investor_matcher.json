@@ -1,0 +1,15 @@
+{
+  "id": "investor-matcher-agent",
+  "name": "VC 投研匹配专家 Agent",
+  "developer": "创投数据团队",
+  "description": "基于 10 万+ 全球 VC/PE 数据，为您精准匹配关注 AI、硬科技及出海赛道的投资人。",
+  "keywords": [
+    "投资人",
+    "融资",
+    "VC",
+    "风险投资",
+    "BP 诊断"
+  ],
+  "endpoint": "https://api.yourdomain.com/intent/investor-match",
+  "action_link": "https://yourdomain.com/investor-dashboard"
+}
